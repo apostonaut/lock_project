@@ -2,7 +2,7 @@ module lock_top ();
 
 //wires for connections between modules go here:
 
-//this is a comment
+//this is a comment, and it's being modified
 
 //instantiate modules
  Controller controller(.submit(), 
