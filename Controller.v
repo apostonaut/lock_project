@@ -1,84 +1,118 @@
-module Controller(submit, system_reset, num_inputs, compare_out, reset, pass_len, out_hex);
-	input submit;
-	input system_reset;
-	input num_inputs;
-	input pass_len;
+module Controller(storeButton, inputButton, submitButton, system_reset, compareSignal, resetSignal, pass_len, out_hex, doneCompare, ld_input, ld_pass);
+	input submitButton;
+	input storeButton;
+	input inputButton;
+	input system_reset; // reset the system??
+	input doneCompare; // determines if codeChecker is done comparing
+	input pass_len; // setup Panel needs to send in the size of the password
+
 	
-	output reg reset;
-	output out_hex;
-	output reg compare_out;
+	output reg resetSignal; // active low reset which resets all the registers
+	output out_hex; // display onto hex
+	output reg ld_input; // active high which tells the code checker that you are inputting
+	output reg ld_pass; // active high which tells the setup panel that you are creating a password
+	output reg compareSignal; 
 	
-	reg num_attempts;
+	reg [1:0]num_attempts;
 	reg [4:0]currentState;
 	reg [4:0]nextState;
 	
-	localparam 	noInput = 4'd0, 
-					oneInput = 4'd1, 
-					twoInput = 4'd2, 
-					threeInput = 4'd3, 
-					fourInput = 4'd4, 
-					fiveInput = 4'd5, 
-					sixInput = 4'd6, 
-					sevenInput = 4'd7, 
-					eightInput = 4'd8, 
-					nineInput = 4'd9, 
-					tenInput = 4'd10,
-					compare = 4'd12;
+	localparam 	nothingState = 4'd0,
 	
+					inputState = 4'd1,
+					waitInputState = 4'd2,
+					
+					submitState = 4'd3,
+					
+					storeState = 4'd5,
+					waitStoreState = 4'd6,
+					
+					compareState = 4'd7,
+					
+					noCompareState = 4'd8,
+					
+					sleepState = 4'd9;
 	
-	// Get next State
+	// IF THE READ BUTTON IS PRESSED
 	always@(*)
 	begin
 		case (currentState)
-			noInput: nextState = oneInput;
-			oneInput: nextState = twoInput;
-			twoInput: nextState = threeInput;
-			threeInput: nextState = fourInput;
-			fourInput: nextState = fiveInput;
-			fiveInput: nextState = sixInput;
-			sixInput: nextState = sevenInput;
-			sevenInput: nextState = eightInput;
-			eightInput: nextState = nineInput;
-			nineInput: nextState = tenInput; 
-			tenInput: nextState = tenInput; //keep looping
+		nothingState: nextState = inputButton ? inputState : (storeButton ? storeState : nothingState);
+		
+		inputState: nextState = submitButton ?  waitInputState : inputState;
+		waitInputState: nextState = submitButton ?  waitInputState : submitState;
+		
+		submitState: nextState = (pass_len == num_attempts) ? compareState : noCompareState;
+		
+		storeState: nextState = submitButton ? waitStoreState : storeState;
+		waitStoreState: nextState = submitButton ? waitStoreState : nothingState; 
+		
+		compareState: nextState = doneCompare ? nothingState : compareState;
+		
+		noCompareState: nextState = (num_attempts == 2'd3) ? sleepState : nothingState;
+		
+		sleepState: nextState = submitButton ? nothingState : sleepState;
+		// sleepState still needs correct implementation
 		endcase
 	end
 	
-	// IF THE BUTTON IS PRESSED
-	always@(posedge )
-	
-	// Check if the length is the same as the pass_len
+	// do the current State stuff
 	always @(*)
 	begin
-		if (submit)
-		begin
-			if (system_reset) //RESET
-				begin
-					compare_out = 1'b0;
-					reset = 0;
-					num_attempts = num_attempts + 1;
-					currentState = noInput;
+		case (currentState)
+			inputState: begin 
+				ld_input = 1'b1;
+				ld_pass = 1'b0;
+				compareSignal = 1'b0;
+				resetSignal = 1'b1;
 				end
-			else if (currentState == pass_len) //SAME LENGTH DO COMPARISON
-				begin
-					compare_out = 1'b1;
-					reset = 0;
+				
+			storeState: begin 
+				ld_input = 1'b0;
+				ld_pass = 1'b1;
+				compareSignal = 1'b0;
+				resetSignal = 1'b1;
 				end
-			else //NOT SAME LENGTH BASICALLY RESET
-				begin
-					compare_out = 1'b0;
-					reset = 1'b1;
-					num_attempts = num_attempts + 1;
-					currentState = noInput;
+				
+			noCompareState: begin 
+				ld_input = 1'b0;
+				ld_pass = 1'b0;
+				compareSignal = 1'b0;
+				resetSignal = 1'b1;
+				num_attempts = num_attempts + 1'b1;
 				end
-		end
-		else //IF YOU AREN'T DONE TYPING IN THE PASSWORD
-		begin
-			compare_out = 1'b0;
-		end
+				
+			compareState: begin
+				compareSignal = 1'b1;
+				ld_input = 1'b0;
+				ld_pass = 1'b0;
+				resetSignal = 1'b1;
+				end
+				
+			nothingState: begin
+				ld_input = 1'b0;
+				ld_pass = 1'b0;
+				compareSignal = 1'b0;
+				resetSignal = 1'b0;
+				end
+			// need to include somethign that happens insdie sleep
+		endcase
 	end
 	
-	assign out_hex = compare_out;
+	always @(*)
+	begin
+		// we may want to change what the system reset will do
+		if (!system_reset)
+		begin
+			currentState <= nothingState;
+		end
+		
+		// assign the nextstate to be the currentState
+		else 
+			currentState <= nextState;
+	end
+	
+	assign out_hex = currentState;
 	
 	
 endmodule
