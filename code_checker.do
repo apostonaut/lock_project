@@ -31,7 +31,7 @@ force {resetn} 1
 run 10ns
 
 # set 4 registers to password 3210
-force {bits[1]} 1
+force {bits[1]} 0
 force {bits[0]} 1
 run 10ns
 
