@@ -28,24 +28,24 @@ module temp (HEX1, LEDR, storeButton, inputButton, submitButton, system_reset, c
 	input submitButton;
 	input storeButton;
 	input inputButton;
-	input system_reset; // reset the system??
-	input doneCompare; // determines if codeChecker is done comparing
+	input system_reset; // reset all registers in Setup Panel
+	input doneCompare; // signal sent from codeChecker when done comparing
 	input pass_len; // setup Panel needs to send in the size of the password
 
 	
 	output reg resetSignal; // active low reset which resets all the registers
 	output out_hex; // display onto hex
-	output reg ld_input; // active high which tells the code checker that you are inputting
+	output reg ld_input; // active high which tells the code checker that you are inputting from Keyboard
 	output reg ld_pass; // active high which tells the setup panel that you are creating a password
 	output reg compareSignal; 
-	output HEX1;
+	output HEX1; //outputs current FSM state
 	output [9:0]LEDR;
 	
 	reg [1:0]num_attempts;
 	reg [4:0]currentState;
 	reg [4:0]nextState;
 	
-	localparam 	nothingState = 4'd0,
+	localparam 			nothingState = 4'd0,
 	
 					inputState = 4'd1,
 					waitInputState = 4'd2,
@@ -61,16 +61,30 @@ module temp (HEX1, LEDR, storeButton, inputButton, submitButton, system_reset, c
 					
 					sleepState = 4'd8;
 	
-	// IF THE READ BUTTON IS PRESSED
+	// IF THE READ BUTTON IS PRESSED which read button????
 	always@(*)
 	begin
 		case (currentState)
-		
+			nothingState:
+			inputState = 4'd1,
+			waitInputState = 4'd2,
+	
+			submitState = 4'd3,
+					
+			storeState = 4'd4,
+			waitStoreState = 4'd5,
+					
+			compareState = 4'd6,
+					
+			noCompareState = 4'd7,
+					
+			sleepState = 4'd8;
+				
 		nothingState: begin 
-			if (inputButton/*KEY[2]*/)
+			if (inputButton/*KEY[2] pressed*/)
 				nextState = inputState;
 				
-			else if (storeButton/*KEY[3]*/)
+			else if (storeButton/*KEY[3] pressed*/)
 				nextState = storeState;
 				
 			else
