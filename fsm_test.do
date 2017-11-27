@@ -35,54 +35,7 @@ run 10ns
 force {clk} 0
 run 10ns
 
-# nothingState --> inputState
-force {inputButton} 1
-run 10ns
-force {clk} 1
-run 10ns
-force {clk} 0
-run 10ns
-
-# inputState --> wainputState
-#run 10ns
-force {inputButton} 0
-run 10ns
-force {clk} 1
-run 10ns
-force {clk} 0
-run 10ns
-
-# waitInputState --> inputState
-force {inputButton} 1
-run 10ns
-force {clk} 1
-run 10ns
-force {clk} 0
-run 10ns
-
-# inputState --> waitInputState
-force {inputButton} 0
-run 10ns
-force {clk} 1
-run 10ns
-force {clk} 0
-run 10ns
-
-# waitInputState --> submitState
-force {submitButton} 1
-run 10ns
-force {clk} 1
-run 10ns
-force {clk} 0
-run 10ns
-
-# submitState --> nothingState
-force {submitButton} 0
-run 10ns
-force {clk} 1
-run 10ns
-force {clk} 0
-run 10ns
+######
 
 # nothingState --> storeState
 force {storeButton} 1
@@ -132,6 +85,85 @@ force {clk} 1
 run 10ns
 force {clk} 0
 run 10ns
+
+######
+
+# nothingState --> inputState
+force {inputButton} 1
+run 10ns
+force {clk} 1
+run 10ns
+force {clk} 0
+run 10ns
+
+# inputState --> wainputState
+#run 10ns
+force {inputButton} 0
+run 10ns
+force {clk} 1
+run 10ns
+force {clk} 0
+run 10ns
+
+# waitInputState --> inputState
+force {inputButton} 1
+run 10ns
+force {clk} 1
+run 10ns
+force {clk} 0
+run 10ns
+
+# inputState --> waitInputState
+force {inputButton} 0
+run 10ns
+force {clk} 1
+run 10ns
+force {clk} 0
+run 10ns
+
+# waitInputState --> compareState
+force {submitButton} 1
+run 10ns
+force {clk} 1
+run 10ns
+force {clk} 0
+run 10ns
+
+# compareState --> successOrFailureState
+force {submitButton} 0
+run 10ns
+force {clk} 1
+run 10ns
+force {clk} 0
+run 10ns
+
+# successOrFailureState --> checkAttemptsState (invalid password)
+force {invalid_password} 1
+run 10ns
+force {clk} 1
+run 10ns
+force {clk} 0
+run 10ns
+force {invalid_password} 0
+run 10ns
+
+
+# checkAttemptsState --> sleepState
+# happens automatically if max_attempts has been reached
+force {clk} 1
+run 10ns
+force {clk} 0
+run 10ns
+
+
+#  sleepState --> nothingState
+force {end_sleep} 1
+run 10ns
+force {clk} 1
+run 10ns
+force {clk} 0
+run 10ns
+force {end_sleep} 0
 
 
 #force clk 0 0, 1 10 -repeat 20

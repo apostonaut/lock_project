@@ -22,7 +22,7 @@ module fsm_test
 	
 	// Declare states
 	parameter 	
-					max_attempts = 3,
+					max_attempts = 1,
 					
 					nothingState = 0, inputState = 1,
 					waitInputState = 2,
@@ -35,7 +35,10 @@ module fsm_test
 	// current state and the input
 	always @ (posedge clk or posedge system_reset) begin
 		if (system_reset)
+		begin
 			currentState <= nothingState;
+			num_attempts <= 2'b0;
+		end
 		else
 			case (currentState)
 				nothingState:
@@ -112,7 +115,7 @@ module fsm_test
 				sleepState:
 					if (end_sleep)
 					begin
-						currentState <= sleepState;
+						currentState <= nothingState;
 					end
 					else
 					begin
