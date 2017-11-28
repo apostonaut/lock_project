@@ -28,7 +28,7 @@ module code_checker(clk, correct_password, input_value, store_value, incorrect_p
 	
 	integer counter;
 	
-	always @(~compare) begin //maybe use clock???
+	always @(*) begin //maybe use clock???
 		
 		//MUST begin by resetting system in order for this to work!!
 		if (!resetn) begin
@@ -40,15 +40,11 @@ module code_checker(clk, correct_password, input_value, store_value, incorrect_p
 				pw_in[counter] <= 2'b00;
 			end
 		end
-	end
-	
-	/*
-	always @(*) begin
 		
 		// if input_value
-		if (input_value)
+		else if (input_value)
 		begin
-			/assign password_input[num_inputs] to value in 'bits' 
+			//assign password_input[num_inputs] to value in 'bits' 
 			//need to confirm that this array indexing is correct
 			pw_in[num_inputs] <= bits;
 			num_inputs <= num_inputs + 1;
@@ -61,27 +57,37 @@ module code_checker(clk, correct_password, input_value, store_value, incorrect_p
 			pw_sys[num_password] <= bits;
 			num_password <= num_password + 1;
 		end
+		
+		// if comparing
+		else if (compare) begin
+			@(posedge compare) begin
+				for (index = 0; index < 4; index = index + 1) begin
+					if (pw_sys[index] == pw_in[index])
+					begin
+						correct_password <= 1'b1;
+						pw_in[index] <= 2'b00;
+					end
+				end
+			end
+			if (correct_password == 1'b0)
+			incorrect_password <= 1'b1;
+			// reset the entire system
+			num_inputs <= 0;
+		end
+		
+		
+		
+	end
+	
+	/*
+	always @(*) begin
+		
+		
 	end
 	*/
 	
 	// comparing
-	
-	always @(posedge compare) begin
-		
-		for (index = 0; index < 4; index = index + 1) begin
-			if (pw_sys[index] == pw_in[index])
-			begin
-				correct_password <= 1'b1;
-				pw_in[index] <= 2'b00;
-			end
-		end
-		/*
-		if (correct_password == 1'b0)
-			incorrect_password <= 1'b1;
-		// reset the entire system
-		num_inputs <= 0;
-		*/
-	end
+
 	
 	
 endmodule
