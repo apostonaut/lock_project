@@ -16,61 +16,173 @@ log {/*}
 # add wave {/*} would add all items in top level simulation module.
 add wave {/*}
 
-# reset to load defaults
-force {resetn} 0 
-run 10ns
-
+#set defaults for signals
 force {input_value} 0
-run 10ns
-force {input_value} 1
-run 10ns
-force {input_value} 0
-run 10ns
-
-force {resetn} 1
+force {store_value} 0
+force {input_reset} 1
+force {system_reset} 1
+force {compare} 0
 run 10ns
 
-# set 4 registers to password 3210
-force {bits[1]} 0
+#######
+#LOAD SYSTEM PASSWORD (3212)
+#######
+# reset to clear input and system registers
+force {system_reset} 0 
+run 10ns
+force {system_reset} 1
+run 10ns
+
+# set pw_in[0]
+force {bits[1]} 1
 force {bits[0]} 1
 run 10ns
-
-force {input_value} 1
+force {store_value} 1
 run 10ns
-force {input_value} 0
+force {store_value} 0
 run 10ns
 
+# set pw_in[1]
 force {bits[1]} 1
 force {bits[0]} 0
 run 10ns
-
-force {input_value} 1
+force {store_value} 1
 run 10ns
-force {input_value} 0
+force {store_value} 0
 run 10ns
 
+# set pw_in[2]
 force {bits[1]} 0
 force {bits[0]]} 1
 run 10ns
+force {store_value} 1
+run 10ns
+force {store_value} 0
+run 10ns
 
+# set pw_in[3]
+force {bits[1]} 1
+force {bits[0]} 0
+run 10ns
+force {store_value} 1
+run 10ns
+force {store_value} 0
+run 10ns
+
+#######
+#LOAD INPUT PASSWORD (3012)
+#######
+
+# reset to clear input register
+force {input_reset} 0 
+run 10ns
+force {input_reset} 1
+run 10ns
+
+# set pw_in[0]
+force {bits[1]} 1
+force {bits[0]} 1
+run 10ns
 force {input_value} 1
 run 10ns
 force {input_value} 0
 run 10ns
 
+# set pw_in[1]
 force {bits[1]} 0
 force {bits[0]} 0
 run 10ns
-
 force {input_value} 1
 run 10ns
 force {input_value} 0
 run 10ns
 
+# set pw_in[2]
+force {bits[1]} 0
+force {bits[0]]} 1
+run 10ns
+force {input_value} 1
+run 10ns
+force {input_value} 0
+run 10ns
 
-#force clk 0 0, 1 10 -repeat 20
-#run 200ns
+# set pw_in[3]
+force {bits[1]} 1
+force {bits[0]} 0
+run 10ns
+force {input_value} 1
+run 10ns
+force {input_value} 0
+run 10ns
 
+# PERFORM COMPARE
+force {compare} 1
+run 10ns
+force {compare} 0
+run 10ns
 
+# reset to clear input register
+force {input_reset} 0 
+run 10ns
+force {input_reset} 1
+run 10ns
+
+#######
+#LOAD INPUT PASSWORD (3212)
+#######
+
+# reset to clear input register
+force {input_reset} 0 
+run 10ns
+force {input_reset} 1
+run 10ns
+
+# set pw_in[0]
+force {bits[1]} 1
+force {bits[0]} 1
+run 10ns
+force {input_value} 1
+run 10ns
+force {input_value} 0
+run 10ns
+
+# set pw_in[1]
+force {bits[1]} 1
+force {bits[0]} 0
+run 10ns
+force {input_value} 1
+run 10ns
+force {input_value} 0
+run 10ns
+
+# set pw_in[2]
+force {bits[1]} 0
+force {bits[0]]} 1
+run 10ns
+force {input_value} 1
+run 10ns
+force {input_value} 0
+run 10ns
+
+# set pw_in[3]
+force {bits[1]} 1
+force {bits[0]} 0
+run 10ns
+force {input_value} 1
+run 10ns
+force {input_value} 0
+run 10ns
+
+# PERFORM COMPARE
+force {compare} 1
+run 10ns
+force {compare} 0
+run 10ns
+
+# reset to clear entire system
+force {system_reset} 0 
+run 10ns
+force {system_reset} 1
+run 10ns
 
 
