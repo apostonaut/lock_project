@@ -14,12 +14,12 @@ module lock_top (LEDR, SW, HEX0, HEX1, HEX2, HEX3, KEY, CLOCK_50);
 	wire compare, store_value, input_value, correct_pw, invalid_pw,
 	sleep, end_sleep, input_reset, system_reset;
 	
-
-//instantiate hex decoder modules
-	hexCode h0( .hex(HEX0), .sw(SW[3:0]));
-	hexCode h1( .hex(HEX1), .sw(SW[3:0]));
-	hexCode h2( .hex(HEX2), .sw(SW[3:0]));
-	hexCode h3( .hex(HEX3), .sw(SW[3:0]));
+	wire[3:0] reg0, reg1, reg2, reg3;
+//instantiate hex decoder modules: note that HEX0 corresponds to reg3, since the reg array is in reverse order of HEXes
+	hexCode h0( .hex(HEX0), .sw(reg3));
+	hexCode h1( .hex(HEX1), .sw(reg2));
+	hexCode h2( .hex(HEX2), .sw(reg1));
+	hexCode h3( .hex(HEX3), .sw(reg0));
 	
 	
 //instantiate controller module
@@ -52,10 +52,10 @@ code_checker c0(
 	.system_reset(system_reset), //two different reset signals from Controller
 	.bits(SW[1:0]), 
 		
-	.HEX0(HEX0), //display 4th char of password
-	.HEX1(HEX1), 
-	.HEX2(HEX2), 
-	.HEX3(HEX3), // display 1st char of password
+	.reg0(HEX0), //display leftmost char of password
+	.reg1(HEX1), 
+	.reg2(HEX2), 
+	.reg3(HEX3), // display rightmost char of password
 		/* 
 		.sys_test0(), 
 		.sys_test1(), 
