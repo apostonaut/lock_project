@@ -45,14 +45,14 @@ module code_checker(
 	.input_reset(), //high when 
 		.system_reset(), //two different reset signals from Controller
 		.bits(), 
-		.in_test0(), 
+		/*.in_test0(), 
 		.in_test1(), 
 		.in_test2(), 
 		.in_test3(), 
 		.sys_test0(), 
 		.sys_test1(), 
 		.sys_test2(), 
-		.sys_test3(),
+		.sys_test3(),*/
 		.correct_password(), 
 		.incorrect_password() //result of compare operation
 		);
