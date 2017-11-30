@@ -13,7 +13,7 @@ module fsm_test
 	input storeButton, inputButton, submitButton, system_reset, clk, 
 			correct_password, invalid_password, end_sleep,
 			
-	output reg input_value, store_value, compare, unlock
+	output reg input_value, store_value, compare, unlock, sleep
 );
 
 	// Declare state register
@@ -195,6 +195,7 @@ module fsm_test
 					store_value = 0;
 					compare = 0;
 					unlock = 0;
+					sleep = 0;
 				end
 			
 			inputState:	
@@ -219,6 +220,10 @@ module fsm_test
 			unlockState:
 				begin
 					unlock = 1;
+				end
+			sleepState:
+				begin
+					sleep = 1;
 				end
 			
 			storeState:
