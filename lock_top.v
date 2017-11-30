@@ -17,7 +17,7 @@ module code_checker(
 	.input_value(), //signal from Controller, store value in input register
 	.store_value(), //signal from Controller, store value in system register
 	.compare(), 	// activates compare operation on posedge compare
-		.input_reset(), 
+	.input_reset(), //high when 
 		.system_reset(), //two different reset signals from Controller
 		.bits(), 
 		.in_test0(), 
