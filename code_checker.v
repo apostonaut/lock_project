@@ -7,11 +7,12 @@ module code_checker(
 		store_value, //signal from Controller, store value in system register
 		compare, 	// activates compare operation on posedge compare
 		input_reset, system_reset, //two different reset signals from Controller
-		input [1:0]bits, 
+		display_pw,	//input from SW[9] that signals to display either user p/w or sys p/w
+		input [3:0]bits, 
 		
 		/*output [1:0]in_test0, in_test1, in_test2, in_test3, 
 		sys_test0, sys_test1, sys_test2, sys_test3,*/
-		output [7:0] HEX3, HEX2, HEX1, HEX0,   
+		output [3:0] reg3, reg2, reg1, reg0,   
 		
 		output reg correct_password, incorrect_password //result of compare operation
 		);
@@ -51,9 +52,17 @@ module code_checker(
 		end
 	end
 	
+	always @ (*) begin
+		
+	end
+	
 	// view contents of registers of pw_in
 	assign {in_test0, in_test1, in_test2, in_test3} = 
 				{pw_in[0],pw_in[1],pw_in[2],pw_in[3]};
+	
+	// view contents of registers of pw_sys
+	assign {sys_test0, sys_test1, sys_test2, sys_test3} = 
+					{pw_sys[0],pw_sys[1],pw_sys[2],pw_sys[3]};
 
 	//ASSIGN VALUES OF pw_sys
 	always @(posedge store_value or negedge system_reset) begin
@@ -75,10 +84,7 @@ module code_checker(
 		
 		end
 	end
-	
-	// view contents of registers of pw_sys
-	assign {sys_test0, sys_test1, sys_test2, sys_test3} = 
-					{pw_sys[0],pw_sys[1],pw_sys[2],pw_sys[3]};
+
 	
 	//COMPARE CODE WHEN 'compare' SIGNAL SENT FROM CONTROLLER
 	always @(posedge compare) begin
