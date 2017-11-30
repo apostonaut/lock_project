@@ -11,6 +11,7 @@ module code_checker(
 		
 		/*output [1:0]in_test0, in_test1, in_test2, in_test3, 
 		sys_test0, sys_test1, sys_test2, sys_test3,*/
+		output [7:0] HEX3, HEX2, HEX1, HEX0,   
 		
 		output reg correct_password, incorrect_password //result of compare operation
 		);
