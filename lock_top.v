@@ -1,5 +1,7 @@
 module lock_top (LEDR, SW, HEX0, HEX1, HEX2, HEX3, KEY, CLOCK_50);
 	input [3:0] KEY;
+	// SW[9] to toggle between displaying the inputted password and the stored password
+	// SW[3:0] for pw character input
 	input [9:0] SW;
 	output [9:0] LEDR;
 	//HEX display 4-char password
@@ -8,7 +10,7 @@ module lock_top (LEDR, SW, HEX0, HEX1, HEX2, HEX3, KEY, CLOCK_50);
 	output [7:0] HEX2;
 	output [7:0] HEX3;
 
-	//IDEA:perhaps we can use SW[9] to toggle between displaying the inputted password and the stored password
+	
 	
 //wires for connections between modules go here:
 	wire compare, store_value, input_value, correct_pw, invalid_pw,
@@ -50,6 +52,7 @@ code_checker c0(
 	.compare(compare), 	// activates compare operation on posedge compare
 	.input_reset(input_reset), //high when 
 	.system_reset(system_reset), //two different reset signals from Controller
+	.display_pw(SW[9]),
 	.bits(SW[1:0]), 
 		
 	.reg3(reg3), //rightmost char of password
