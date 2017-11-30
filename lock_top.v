@@ -15,8 +15,14 @@ module lock_top (LEDR, SW, HEX0, HEX1, HEX2, HEX3, KEY, CLOCK_50);
 	sleep, end_sleep, input_reset, system_reset;
 	
 
-
-//instantiate modules
+//instantiate hex decoder modules
+	hexCode h0( .hex(HEX0), .sw(SW[3:0]));
+	hexCode h1( .hex(HEX1), .sw(SW[3:0]));
+	hexCode h2( .hex(HEX2), .sw(SW[3:0]));
+	hexCode h3( .hex(HEX3), .sw(SW[3:0]));
+	
+	
+//instantiate controller module
 controller_working controller	(	
 				.storeButton(~KEY[3]), 
 				.inputButton(~KEY[2]), 
