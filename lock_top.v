@@ -11,7 +11,7 @@ module lock_top (LEDR, SW, HEX1, KEY);
 
 
 //instantiate modules
-Controller controller	(	.storeButton(~KEY[3]), 
+controller_working controller	(	.storeButton(~KEY[3]), 
 				.inputButton(~KEY[2]), 
 				.submitButton(~KEY[1]), 
 				.system_reset(~KEY[0]),
