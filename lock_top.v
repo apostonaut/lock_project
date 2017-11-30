@@ -4,6 +4,8 @@ module lock_top (LEDR, SW, HEX1, KEY);
 	output [9:0] LEDR;
 	output [7:0] HEX1;
 
+	//IDEA:perhaps we can use SW[9] to toggle between displaying the inputted password and the stored password
+	
 //wires for connections between modules go here:
 	wire compare, store_value, input_value, correct_pw, invalid_pw,
 	sleep, end_sleep, input_reset, system_reset;
