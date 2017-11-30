@@ -194,6 +194,7 @@ module fsm_test
 					input_value = 0;
 					store_value = 0;
 					compare = 0;
+					unlock = 0;
 				end
 			
 			inputState:	
