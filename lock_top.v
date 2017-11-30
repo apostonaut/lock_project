@@ -2,17 +2,35 @@ module lock_top ();
 
 //wires for connections between modules go here:
 
-//this is a comment, and it's being modified
 
 //instantiate modules
- Controller controller(.submit(), 
-					.system_reset(), 
-					.num_inputs(), 
-					.compare_out(), 
-					.reset(), 
-					.pass_len(), 
-					.out_hex()
-					);
+Controller controller	(	.storeButton(~KEY[3]), 
+				.inputButton(~KEY[2]), 
+				.submitButton(~KEY[1]), 
+				.system_reset(~KEY[0]),
+			 .clk(CLOCK_50),
+			 .correct_password(),
+			 .invalid_password(),
+			 .end_sleep(),
+			 /*OUTPUTS*/
+			 .input_value(),
+			 .store_value(),
+			 .compare(),
+			 .unlock(),
+			 .sleep()
+
+			 //.pass_len(2'd3), NEED TO ADD THIS FEATURE 
+				);
+	
+/*
+module fsm_test
+(
+	input storeButton, inputButton, submitButton, system_reset, clk, 
+			correct_password, invalid_password, end_sleep,
+			
+	output reg input_value, store_value, compare, unlock, sleep
+);
+*/
 module code_checker( 
 	.input_value(), //signal from Controller, store value in input register
 	.store_value(), //signal from Controller, store value in system register
