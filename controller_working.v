@@ -8,7 +8,7 @@
 // can be written more than once per state or per clock cycle.
 //
 
-module fsm_test
+module controller_working
 (
 	input storeButton, inputButton, submitButton, system_reset, clk, 
 			correct_password, invalid_password, end_sleep,
