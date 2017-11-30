@@ -12,7 +12,7 @@ module code_checker(
 		
 		/*output [1:0]in_test0, in_test1, in_test2, in_test3, 
 		sys_test0, sys_test1, sys_test2, sys_test3,*/
-		output [3:0] reg3, reg2, reg1, reg0,   
+		output reg [3:0] reg3, reg2, reg1, reg0,   
 		
 		output reg correct_password, incorrect_password //result of compare operation
 		);
@@ -51,17 +51,23 @@ module code_checker(
 		
 		end
 	end
-	
+	//output reg[3:0] reg3, reg2, reg1, reg0
 	always @ (*) begin
+		if(display_pw)begin
+			{reg0, reg1, reg2, reg3} = {pw_in[0],pw_in[1],pw_in[2],pw_in[3]};
+		end
+		else begin
+			{reg0, reg1, reg2, reg3} = {pw_sys[0],pw_sys[1],pw_sys[2],pw_sys[3]};
+		end
 		
 	end
 	
 	// view contents of registers of pw_in
-	assign {in_test0, in_test1, in_test2, in_test3} = 
+	assign {reg0, reg1, reg2, reg3} = 
 				{pw_in[0],pw_in[1],pw_in[2],pw_in[3]};
 	
 	// view contents of registers of pw_sys
-	assign {sys_test0, sys_test1, sys_test2, sys_test3} = 
+	assign {reg0, reg1, reg2, reg3} = 
 					{pw_sys[0],pw_sys[1],pw_sys[2],pw_sys[3]};
 
 	//ASSIGN VALUES OF pw_sys
