@@ -1,8 +1,12 @@
-module lock_top (LEDR, SW, HEX1, KEY);
+module lock_top (LEDR, SW, HEX0, HEX1, HEX2, HEX3, KEY);
 	input [3:0] KEY;
 	input [9:0] SW;
 	output [9:0] LEDR;
+	//HEX display 4-char password
+	output [7:0] HEX0;
 	output [7:0] HEX1;
+	output [7:0] HEX2;
+	output [7:0] HEX3;
 
 	//IDEA:perhaps we can use SW[9] to toggle between displaying the inputted password and the stored password
 	
@@ -41,10 +45,12 @@ code_checker c0(
 	.input_reset(input_reset), //high when 
 	.system_reset(system_reset), //two different reset signals from Controller
 	.bits(SW[1:0]), 
-		/*.in_test0(), 
-		.in_test1(), 
-		.in_test2(), 
-		.in_test3(), 
+		
+		.HEX0(), //display 4th char of password
+		.HEX1(), 
+		.HEX2(), 
+		.HEX3(), // display 1st char of password
+		/* 
 		.sys_test0(), 
 		.sys_test1(), 
 		.sys_test2(), 
