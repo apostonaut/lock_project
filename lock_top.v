@@ -52,10 +52,10 @@ code_checker c0(
 	.system_reset(system_reset), //two different reset signals from Controller
 	.bits(SW[1:0]), 
 		
-	.reg0(HEX0), //display leftmost char of password
-	.reg1(HEX1), 
-	.reg2(HEX2), 
-	.reg3(HEX3), // display rightmost char of password
+	.reg3(reg3), //rightmost char of password
+	.reg2(reg2), 
+	.reg1(reg1), 
+	.reg0(reg0), // leftmost char of password
 		/* 
 		.sys_test0(), 
 		.sys_test1(), 
