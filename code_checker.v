@@ -9,8 +9,8 @@ module code_checker(
 		input_reset, system_reset, //two different reset signals from Controller
 		input [1:0]bits, 
 		
-		output [1:0]in_test0, in_test1, in_test2, in_test3, 
-		sys_test0, sys_test1, sys_test2, sys_test3,
+		/*output [1:0]in_test0, in_test1, in_test2, in_test3, 
+		sys_test0, sys_test1, sys_test2, sys_test3,*/
 		
 		output reg correct_password, incorrect_password //result of compare operation
 		);
