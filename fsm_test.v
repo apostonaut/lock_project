@@ -13,7 +13,7 @@ module fsm_test
 	input storeButton, inputButton, submitButton, system_reset, clk, 
 			correct_password, invalid_password, end_sleep,
 			
-	output reg input_value, store_value, compare
+	output reg input_value, store_value, compare, unlock
 );
 
 	// Declare state register
@@ -28,8 +28,8 @@ module fsm_test
 					waitInputState = 2,
 					compareState = 3, storeState = 4,
 					waitStoreState = 5, storePasswordState = 6,
-					successOrFailureState = 7, checkAttemptsState = 8,
-					sleepState = 9;
+					successOrFailureState = 7, unlockState = 10,
+					checkAttemptsState = 8, sleepState = 9;
 	
 	// Determine the next state synchronously, based on the
 	// current state and the input
@@ -90,7 +90,7 @@ module fsm_test
 				successOrFailureState:
 					if (correct_password)
 					begin
-						currentState <= nothingState;
+						currentState <= unlockState;
 					end
 					else if(invalid_password)
 					begin
@@ -101,6 +101,19 @@ module fsm_test
 					begin
 						currentState <= successOrFailureState;
 					end
+				//code_checker needs to send a pulse of correct_password
+				unlockState:
+					if (correct_password)
+					begin
+						currentState <= unlockState;
+					end
+					else
+					begin
+						currentState <= nothingState;
+					end
+				
+					currentState <= unlockState;
+					
 					
 				checkAttemptsState:
 					if (num_attempts == max_attempts)
@@ -196,6 +209,15 @@ module fsm_test
 			compareState:
 				begin
 					compare = 1;
+				end
+			successOrFailureState:
+				begin
+					compare = 0;
+				end
+			
+			unlockState:
+				begin
+					unlock = 1;
 				end
 			
 			storeState:
