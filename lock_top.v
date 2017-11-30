@@ -1,4 +1,4 @@
-module lock_top (LEDR, SW, HEX0, HEX1, HEX2, HEX3, KEY);
+module lock_top (LEDR, SW, HEX0, HEX1, HEX2, HEX3, KEY, CLOCK_50);
 	input [3:0] KEY;
 	input [9:0] SW;
 	output [9:0] LEDR;
@@ -58,6 +58,12 @@ code_checker c0(
 		.correct_password(correct_pw), 
 		.incorrect_password(invalid_pw) //result of compare operation
 		);
+	
+rate_divider sleep (
+	.clk(CLOCK_50), 
+	.sleep(sleep),
+	.end_sleep(end_sleep)
+	);
 
 endmodule
 
