@@ -1,6 +1,13 @@
-module lock_top ();
+module lock_top (LEDR, SW, HEX1, KEY);
+	input [3:0] KEY;
+	input [9:0] SW;
+	output [9:0] LEDR;
+	output [7:0] HEX1;
 
 //wires for connections between modules go here:
+	wire compare, store_value, input_value, correct_pw, invalid_pw,
+	sleep, end_sleep;
+	
 
 
 //instantiate modules
