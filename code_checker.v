@@ -29,28 +29,68 @@ module code_checker(
 	reg [1:0] pw_sys [3:0];
 	
 	//ASSIGN VALUES OF pw_in
-	always @(posedge input_value or negedge input_reset or negedge system_reset) begin
+	always @(posedge input_value or negedge input_reset or negedge system_reset or posedge store_value or posedge compare) begin
 		//MUST begin by resetting system in order for this to work!!
-		if (!input_reset | !system_reset) begin
+		if (!input_reset) begin
 			num_inputs <= 0;
-			num_matches <= 0;
 			correct_password <= 0;
 			incorrect_password <= 0;
+
 			pw_in[0] <= 2'd0;
 			pw_in[1] <= 2'd0;
 			pw_in[2] <= 2'd0;
 			pw_in[3] <= 2'd0;
 		end
 		
-		else begin
+		else if (!system_reset) begin
+			num_inputs <= 0;
+			correct_password <= 0;
+			incorrect_password <= 0;
+			pw_length <= 0;
+
+			pw_sys[0] <= 2'd0;
+			pw_sys[1] <= 2'd0;
+			pw_sys[2] <= 2'd0;
+			pw_sys[3] <= 2'd0;
+			
+			pw_in[0] <= 2'd0;
+			pw_in[1] <= 2'd0;
+			pw_in[2] <= 2'd0;
+			pw_in[3] <= 2'd0;
+		end
+		
+
+		else if (input_value) begin
 			/*assign password_input[num_inputs] to value in 'bits' 
 			need to confirm that this array indexing is correct*/
 			pw_in[num_inputs] <= bits;
-			num_inputs <= num_inputs + 1;
+			num_inputs <= num_inputs + 1;		
+		end
+		
+		else if (store_value) begin
+			/*assign password_input[num_inputs] to value in 'bits' 
+			need to confirm that this array indexing is correct*/
+			pw_sys[pw_length] <= bits;
+			pw_length <= pw_length + 1;
 			
 		
 		end
+		
+		else begin		
+			// ASSIGN VALUES FOR RESULT OF PASSWORD COMPARE
+			if (num_matches == pw_length)
+				begin
+					correct_password = 1;
+					incorrect_password = 0;
+				end
+			else
+				begin
+					correct_password = 0;
+					incorrect_password = 1;
+				end
+		end
 	end
+	
 	//output reg[3:0] reg3, reg2, reg1, reg0
 	always @ (*) begin
 		if(display_pw)begin
@@ -61,61 +101,19 @@ module code_checker(
 		end
 		
 	end
-	
-	// view contents of registers of pw_in
-	assign {reg0, reg1, reg2, reg3} = 
-				{pw_in[0],pw_in[1],pw_in[2],pw_in[3]};
-	
-	// view contents of registers of pw_sys
-	assign {reg0, reg1, reg2, reg3} = 
-					{pw_sys[0],pw_sys[1],pw_sys[2],pw_sys[3]};
 
-	//ASSIGN VALUES OF pw_sys
-	always @(posedge store_value or negedge system_reset) begin
-		//MUST begin by resetting system in order for this to work!!
-		if (!system_reset) begin
-			pw_length <= 0;
-			pw_sys[0] <= 2'd0;
-			pw_sys[1] <= 2'd0;
-			pw_sys[2] <= 2'd0;
-			pw_sys[3] <= 2'd0;
+	always @(posedge compare or negedge input_reset or negedge system_reset) begin
+		if (!input_reset | !system_reset) begin
+			num_matches <= 0;
 		end
-		
-		else begin
-			/*assign password_input[num_inputs] to value in 'bits' 
-			need to confirm that this array indexing is correct*/
-			pw_sys[pw_length] <= bits;
-			pw_length <= pw_length + 1;
-			
-		
-		end
-	end
-
-	
-	//COMPARE CODE WHEN 'compare' SIGNAL SENT FROM CONTROLLER
-	always @(posedge compare) begin
-		for (index = 0; index < 4; index = index + 1) begin
-			if (pw_sys[index] == pw_in[index])
-			begin
-			num_matches = num_matches + 1;
+		else if (compare) begin
+			for (index = 0; index < 4; index = index + 1) begin
+				if (pw_sys[index] == pw_in[index])
+				begin
+				num_matches = num_matches + 1;
+				end
 			end
 		end
 	end
-	
-	// ASSIGN VALUES FOR RESULT OF PASSWORD COMPARE
-	always @(compare) begin
-		if (num_matches == pw_length)
-		begin
-			correct_password = 1;
-			incorrect_password = 0;
-		end
-		else
-		begin
-			correct_password = 0;
-			incorrect_password = 1;
-		end
-	end
-			
-			// reset the entire system
-	
+
 endmodule
