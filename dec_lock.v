@@ -13,6 +13,14 @@ module dec_lock (LEDR, SW, HEX0, HEX1, HEX2, HEX3, HEX5, HEX4, KEY, CLOCK_50);
 	output [7:0] HEX4;
 	output [7:0] HEX5;
 	
+	//TEST OUTPUTS
+	assign LEDR[5] = correct_pw;
+	assign LEDR[4] = invalid_pw;
+	assign LEDR[3] = compare;
+	assign LEDR[8] = input_value;
+	assign LEDR[7] = store_value;
+	// LEDR[9] = unlock (directly from code checker;
+	
 
 //wires for connections between modules go here:
 	wire compare, store_value, input_value, correct_pw, invalid_pw,
@@ -61,20 +69,15 @@ code_checker c0(
 	.input_reset(input_reset), //high when done comparing
 	.system_reset(~KEY[0]), //two different reset signals from Controller
 	.display_pw(SW[9]),
-	.bits(SW[1:0]),
+	.bits(SW[3:0]),
 	
 	.hex(HEX4), //
 	.reg3(reg3), //rightmost char of password
 	.reg2(reg2), 
 	.reg1(reg1), 
 	.reg0(reg0), // leftmost char of password
-		/* 
-		.sys_test0(), 
-		.sys_test1(), 
-		.sys_test2(), 
-		.sys_test3(),*/
-		.correct_password(correct_pw), 
-		.incorrect_password(invalid_pw) //result of compare operation
+	.correct_password(correct_pw), 
+	.incorrect_password(invalid_pw) //result of compare operation
 		);
 	
 rate_divider sleep_module (
@@ -83,11 +86,7 @@ rate_divider sleep_module (
 	.end_sleep(end_sleep)
 	);
 	
-	assign LEDR[5] = correct_pw;
-	assign LEDR[4] = invalid_pw;
-	assign LEDR[3] = compare;
-	assign LEDR[8] = input_value;
-	assign LEDR[7] = store_value;
+
 endmodule
 
 module rate_divider(
@@ -395,7 +394,7 @@ module code_checker(
 	hexCode h4( .hex(hex), .sw(num_inputs));
 	
 	
-	reg [1:0] num_inputs;
+	reg [2:0] num_inputs;
 	reg [3:0] pw_length;
 	//integer max_pw_length = 3;
 	integer index;
@@ -404,11 +403,27 @@ module code_checker(
 	reg [3:0] pw_in0, pw_in1,pw_in2,pw_in3;
 	reg [3:0] pw_sys0, pw_sys1, pw_sys2, pw_sys3;
 	
-	//ASSIGN VALUES OF pw_in
-	always @(posedge input_value or posedge input_reset or posedge system_reset or posedge store_value or posedge compare) begin
-		//MUST begin by resetting system in order for this to work!!
+	//ATTEMPT TO INCREMENT AND RESET IN SEPARATE ALWAYS BLOCK
+	always @(posedge input_value or posedge input_reset or posedge system_reset) begin
 		if (input_reset) begin
 			num_inputs <= 0;
+			
+		end
+		else if (system_reset) begin
+			num_inputs <= 0;
+			pw_length <= 0;
+		end
+		else begin
+			num_inputs <= num_inputs + 1'b1;
+		end
+	end
+	
+	//ASSIGN VALUES OF pw_in
+	//always @(posedge input_value or posedge input_reset or posedge system_reset or posedge store_value or posedge compare) begin
+	always @(input_value or input_reset or system_reset or store_value or compare) begin
+		//MUST begin by resetting system in order for this to work!!
+		if (input_reset) begin
+			//num_inputs <= 0;
 			correct_password <= 0;
 			incorrect_password <= 0;
 
@@ -419,10 +434,10 @@ module code_checker(
 		end
 		
 		else if (system_reset) begin
-			num_inputs <= 0;
+			//num_inputs <= 0;
 			correct_password <= 0;
 			incorrect_password <= 0;
-			pw_length <= 0;
+			//pw_length <= 0;
 
 			pw_sys0 <= 4'd0;
 			pw_sys1 <= 4'd0;
@@ -439,20 +454,20 @@ module code_checker(
 			/*assign password_input[num_inputs] to value in 'bits' 
 			need to confirm that this array indexing is correct*/
 			if (num_inputs == 4'd0) begin
-			num_inputs <= num_inputs + 1'b1;		
-			pw_in0 <= bits;
+				//num_inputs <= num_inputs + 1'b1;		
+				pw_in0 <= bits;
 			end
 			else if (num_inputs == 4'd1)begin
-			num_inputs <= num_inputs + 1'b1;		
-			pw_in1 <= bits;
+				//num_inputs <= num_inputs + 1'b1;		
+				pw_in1 <= bits;
 			end
 			else if (num_inputs == 4'd2)begin
-			num_inputs <= num_inputs + 1'b1;		
-			pw_in2 <= bits;
+				//num_inputs <= num_inputs + 1'b1;		
+				pw_in2 <= bits;
 			end
 			else begin
-			num_inputs <= num_inputs + 1'b1;		
-			pw_in3 <= bits;
+				//num_inputs <= num_inputs + 1'b1;		
+				pw_in3 <= bits;
 			end
 			
 		end
@@ -482,7 +497,7 @@ module code_checker(
 		
 		end
 		
-		else begin		
+		else /*if compare*/ begin		
 			// ASSIGN VALUES FOR RESULT OF PASSWORD COMPARE
 			if ({pw_in0,pw_in1,pw_in2,pw_in3} == {pw_sys0,pw_sys1,pw_sys2,pw_sys3})
 				begin
@@ -508,15 +523,7 @@ module code_checker(
 		
 	end
 
-	always @(posedge compare) begin
-		{pw_in0,pw_in1,pw_in2,pw_in3} == {pw_sys0,pw_sys1,pw_sys2,pw_sys3};
-	end
-
 endmodule
-
-
-
-
 
 //HEX MOdULE
 module hexCode(output [7:0]hex, input [3:0]sw);
